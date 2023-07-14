@@ -1,6 +1,7 @@
 # Project created to practice Concurency in GoLang
 
 - Simple
+  
         Create a function called "printMessage" that takes a string as input and prints it to the console.
 
         In the main function, create a goroutine that invokes the "printMessage" function with the argument "Hello, World!".
@@ -14,6 +15,7 @@
         Example Output: Goroutine started! Hello, World!
 
 -  Practical Concurency
+  
         Define a function called "processFile" that takes a filename (string) as input and simulates some processing on the file. For this example, you can simply print the filename and a message indicating that processing is being done.
 
         In the main function, create a slice of filenames (at least 5 filenames) that represent files to be processed concurrently.
