@@ -1,0 +1,30 @@
+
+
+
+
+sync.WaitGroup and defer wg.Done()
+
+
+The sync.WaitGroup is a synchronization primitive in Go that allows you to wait for a group of goroutines to complete their tasks before proceeding with further execution. It is particularly useful when you have a fixed number of goroutines you want to wait for.
+
+The WaitGroup has three main methods:
+
+Add(delta int): This method is used to add or subtract a delta value to the internal counter of the WaitGroup. The delta value can be positive or negative. When you start a new goroutine, you call wg.Add(1) to increment the counter. When the goroutine completes its work, you call wg.Done() to decrement the counter.
+
+Done(): This method is used to decrement the internal counter of the WaitGroup. It is typically called using defer inside a goroutine function, so it's executed automatically when the goroutine completes its work.
+
+Wait(): This method blocks until the internal counter becomes zero. It is used in the main goroutine to wait for all goroutines to complete their tasks.
+
+Here's how it works:
+
+Before starting any goroutines, you create a WaitGroup and set its counter to the number of goroutines you expect to launch.
+In each goroutine, you call wg.Add(1) to increment the counter before starting the actual work.
+You use defer wg.Done() to ensure that wg.Done() is always called, even if the goroutine panics or returns prematurely. This way, the counter will be decremented correctly.
+After starting all the goroutines, you call wg.Wait() in the main goroutine to wait until the counter becomes zero, meaning all goroutines have completed their work.
+Handling Unknown Number of Goroutines
+If you don't know the exact number of goroutines you'll be starting, you can still use sync.WaitGroup. In this case, you have a few options:
+
+If you have a dynamic or unknown number of goroutines that you want to wait for, you can create the WaitGroup with an initial counter of 0 and use wg.Add(1) before starting each goroutine. Then, in the goroutine function, you can call wg.Done() once the goroutine's work is complete.
+
+Another approach is to use an additional channel to signal the completion of each goroutine. You can create a channel of struct{} and have each goroutine send a value to the channel when it's done. The main goroutine can then use a loop with a range over the channel to wait for all goroutines to signal completion.
+
