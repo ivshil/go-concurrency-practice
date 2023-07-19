@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	//TODO
 	go printMessage("Hello, World!")
 	fmt.Println("Goroutine started!")
 	time.Sleep(1 * time.Second)
