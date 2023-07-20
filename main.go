@@ -7,42 +7,40 @@ import (
 )
 
 func main() {
-	go printMessage("Hello, World!")
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go printMessage("Hello, World!", &wg)
 	fmt.Println("Goroutine started!")
 
 	c := make(chan string)
-	var wg sync.WaitGroup
-
 	fileNames := []string{"Readme.md", "main.go", "go.mod", "main_test.go", "process_tracker.go"}
 	fileNamesLen := len(fileNames)
 
-	wg.Add(fileNamesLen)
-
 	for i := 0; i < fileNamesLen; i++ {
+		wg.Add(2)
 		go processFile(fileNames[i], c, &wg)
+		go printChannel(c, &wg)
 	}
 
-	go func() {
-		wg.Wait() // Wait for all goroutines to complete.
-		close(c)
-	}()
-
-	for msg := range c {
-		fmt.Println(msg)
-	}
-
-	fmt.Println("Well, well, well..")
+	wg.Wait()
+	close(c)
 	fmt.Println("End of Program")
 }
 
-func printMessage(str string) {
+func printChannel(c chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	fmt.Println(<-c)
+}
+
+func printMessage(str string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	fmt.Println(str)
 }
 
 func processFile(fileName string, c chan string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	// Simulate some processing time
 	time.Sleep(12 * time.Millisecond)
 
 	c <- fmt.Sprintf("\nProcessing is being done with file: %s\n", fileName)
